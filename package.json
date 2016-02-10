@@ -1,0 +1,31 @@
+{
+  "name": "tweet-analyser",
+  "version": "0.0.1",
+  "description": "Analyzer for tweets using transliteration.",
+  "main": "tweet-translyzer.js",
+  "dependencies": {
+    "log4js": "^0.6.31",
+    "node-twitter-api": "^1.7.0",
+    "twitter": "^1.2.5"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1"
+  },
+  "scripts": {
+    "test": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amahfouz/tweet-analyser.git"
+  },
+  "keywords": [
+    "twitter",
+    "nlp"
+  ],
+  "author": "Ayman Mahfouz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/amahfouz/tweet-analyser/issues"
+  },
+  "homepage": "https://github.com/amahfouz/tweet-analyser#readme"
+}
