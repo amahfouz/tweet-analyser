@@ -1,5 +1,6 @@
 // Main file for Tweet Translyzer
 
+var Twitter = require('twitter');
 var fs = require('fs');
 var log4js = require('log4js');
 
@@ -7,49 +8,52 @@ var logger = log4js.getLogger();
 
 
 // read the file that has the Twitter credentials
-var config = JSON.parse(fs.readFileSync('twitter-auth.json'));
+var authConfig = JSON.parse(fs.readFileSync('twitter-auth.json'));
 
 
 logger.debug("Initializing Twitter API client.");
 
-var Twitter = require('twitter');
- 
 var client = new Twitter({
-  consumer_key: config.consumerKey,
-  consumer_secret: config.consumerSecret,
-  access_token_key: config.accessTokenKey,
-  access_token_secret: config.accessTokenSecret
+  consumer_key: authConfig.consumerKey,
+  consumer_secret: authConfig.consumerSecret,
+  access_token_key: authConfig.accessTokenKey,
+  access_token_secret: authConfig.accessTokenSecret
 });
 
 logger.debug("Retrieving tweets.")
 
-client.get('search/tweets', {q: 'node.js', lang: "ar"}, function(error, tweets, response){
-	if (error) {
-		logger.warn(error);
-	}
-	else {
-   		logger.info(tweets);
-   		var content = JSON.stringify(tweets);
-   		fs.writeFileSync("tweets.json", content, 'utf8', function(error) {
-   			logger.warn(error);
-   		});
-	}
+var queryJson = JSON.parse(fs.readFileSync("search-query.json", "utf8"));
+
+logger.debug(queryJson);
+
+var tweetsFile = 'eg-tweets.txt';
+
+client.stream('statuses/filter', queryJson,  function(stream){
+  stream.on('data', function(tweet) {
+    fs.appendFile(tweetsFile, tweet.text, 'utf8', function(err) {
+      fs.appendFile(tweetsFile, "\r------------------------\r");
+      if (err)
+         console.log("Append error:" + err);
+    });
+  });
+
+  stream.on('error', function(error) {
+    console.log("Stream error:" + error);
+  });
 });
 
 
-// var twitterAPI = require('node-twitter-api');
-// var twitter = new twitterAPI({
-// 	consumerKey: 'TgnZD9PYg8jaywNC1QtKQyKlE',
-// 	consumerSecret: 'ojUxdzlggVyol5YItTSfqABgysko4L5GhPMyOz8eYjfrkdcZDu'
-// });
-
-// console.log("Obtaining request token");
-
-// twitter.getRequestToken(function(error, requestToken, requestTokenSecret, results){
+// client.get('search/tweets', queryJson, function(error, tweets, response){
 // 	if (error) {
-// 		console.log("Error getting OAuth request token : " + error);
-// 	} else {
-// 		//store token and tokenSecret somewhere, you'll need them later; redirect user 
-// 		console.log(requestToken);
+// 		logger.warn(error);
+// 	}
+// 	else {
+//    		logger.info(tweets);
+//    		var content = JSON.stringify(tweets);
+//    		fs.writeFileSync("tweets.json", content, 'utf8', function(error) {
+//    			logger.warn(error);
+//    		});
 // 	}
 // });
+
+
