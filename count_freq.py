@@ -5,18 +5,16 @@
 
 import codecs
 import sys
+import re
 
 def count_occurrences(f, w):
 	count = 0
 	for line in f:
 		index = 0
-		while True:
-			index = line.find(w, index)
-			if (index < 0):
-				break
-
-			index = index + 1	
-			count = count + 1
+		words = re.split(r'[\n\r\t-_ #]', line)
+		for word in words:
+			if (word == w):
+				count = count + 1
 
 	return count
 
@@ -30,7 +28,7 @@ sys.setdefaultencoding('utf8')
 
 word_file = codecs.open("words.txt", 'r', 'utf-8')
 for word in word_file:
-	f = open("eg-tweets.txt")
+	f = open("sample-tweets.txt")
 	print word.rstrip()
 	print(count_occurrences(f, word.rstrip()))
 	f.close()
