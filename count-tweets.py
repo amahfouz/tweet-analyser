@@ -3,8 +3,13 @@
 '''
 
 import codecs
+import sys
 
-f = codecs.open("eg-tweets.txt", "r", "utf8")
+if len(sys.argv) < 2:
+	print "Please provide filename as a command argument"
+	sys.exit(100)
+
+f = codecs.open(sys.argv[1], "r", "utf8")
 count = 0
 for line in f:
 	if line.startswith("------------------------"):
