@@ -28,9 +28,8 @@ sys.setdefaultencoding('utf8')
 
 word_file = codecs.open("words.txt", 'r', 'utf-8')
 for word in word_file:
-	f = open("sample-tweets.txt")
-	print word.rstrip()
-	print(count_occurrences(f, word.rstrip()))
+	f = open("eg-tweets.txt")
+	print word.rstrip(), "\t\t", count_occurrences(f, word.rstrip())
 	f.close()
 
 

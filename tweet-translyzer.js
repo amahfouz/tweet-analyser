@@ -26,7 +26,7 @@ var queryJson = JSON.parse(fs.readFileSync("search-query.json", "utf8"));
 
 logger.debug(queryJson);
 
-var tweetsFile = 'eg-tweets.txt';
+var tweetsFile = 'oscar-tweets.txt';
 
 client.stream('statuses/filter', queryJson,  function(stream){
   stream.on('data', function(tweet) {
