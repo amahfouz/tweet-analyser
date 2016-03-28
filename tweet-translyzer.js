@@ -3,13 +3,16 @@
 var Twitter = require('twitter');
 var fs = require('fs');
 var log4js = require('log4js');
+var twitsol = require('./twitsol');
 
+// globals 
+
+var solrClient = new twitsol.Twitsol();
 var logger = log4js.getLogger();
 
-
 // read the file that has the Twitter credentials
-var authConfig = JSON.parse(fs.readFileSync('twitter-auth.json'));
 
+var authConfig = JSON.parse(fs.readFileSync('twitter-auth.json'));
 
 logger.debug("Initializing Twitter API client.");
 
@@ -22,19 +25,34 @@ var client = new Twitter({
 
 logger.debug("Retrieving tweets.")
 
+// read the query spec
+
 var queryJson = JSON.parse(fs.readFileSync("search-query.json", "utf8"));
 
 logger.debug(queryJson);
 
-var tweetsFile = 'march-tweets.txt';
+if (process.argv.length < 3) {
+  logger.error("Provide tweets file as command line argument.")
+  process.exit(1);
+}
+
+var tweetsFile = process.argv[2];
 
 client.stream('statuses/filter', queryJson,  function(stream){
   stream.on('data', function(tweet) {
+
+    // write the tweet text to file
+
     fs.appendFile(tweetsFile, tweet.text, 'utf8', function(err) {
       fs.appendFile(tweetsFile, "\r------------------------\r");
       if (err)
          console.log("Append error:" + err);
     });
+
+    // add the tweet test to solr
+
+    addTweetToSolr(tweet);
+
   });
 
   stream.on('error', function(error) {
@@ -43,17 +61,6 @@ client.stream('statuses/filter', queryJson,  function(stream){
 });
 
 
-// client.get('search/tweets', queryJson, function(error, tweets, response){
-// 	if (error) {
-// 		logger.warn(error);
-// 	}
-// 	else {
-//    		logger.info(tweets);
-//    		var content = JSON.stringify(tweets);
-//    		fs.writeFileSync("tweets.json", content, 'utf8', function(error) {
-//    			logger.warn(error);
-//    		});
-// 	}
-// });
-
-
+function addTweetToSolr(tweet) {
+  solrClient.add(tweet);
+};

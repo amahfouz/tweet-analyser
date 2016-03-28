@@ -6,11 +6,13 @@ var solr = require('solr');
 // define the object
 
 function Twitsol(options) {
-	opts = optiona | {};
+	opts = options | {};
 	this.options = opts;
 
-    this.client = solr.createClient();
+    this.client = solr.createClient({'core': "/tweets"});
 }
+
+exports.Twitsol = Twitsol;
 
 Twitsol.prototype.add = function(tweet, callback) {
 	var tsol = this;
@@ -19,10 +21,12 @@ Twitsol.prototype.add = function(tweet, callback) {
     var text = tweet.text;
     var date = tweet.created_at;
 
-    var doc = {"id": id, "text_t": text, "date_t": date};
+    var doc = {"id": id, "title_t": "Foo Bar", "text_t": text, "date_t": date};
 
-    client.add(doc1, function(err) {
+    this.client.add(doc, function(err) {
         if (err)
             console.log(err);
+        else
+            console.log("Document added.");
     });
 }
