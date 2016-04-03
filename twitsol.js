@@ -14,6 +14,8 @@ function Twitsol(options) {
 
 exports.Twitsol = Twitsol;
 
+// add the specified tweet to solr
+
 Twitsol.prototype.add = function(tweet, callback) {
 	var tsol = this;
 
