@@ -25,18 +25,25 @@ var client = new Twitter({
 
 logger.debug("Retrieving tweets.")
 
-// read the query spec
+// check command line args
 
-var queryJson = JSON.parse(fs.readFileSync("search-query.json", "utf8"));
-
-logger.debug(queryJson);
-
-if (process.argv.length < 3) {
-  logger.error("Provide tweets file as command line argument.")
+if (process.argv.length < 4) {
+  logger.error("Provide tweets file and query params file as command line arguments.")
   process.exit(1);
 }
 
 var tweetsFile = process.argv[2];
+console.log("Saving tweets to: " + tweetsFile);
+var queryFile = process.argv[3];
+console.log("Search query from: " + queryFile); 
+
+// read the query spec
+
+var queryJson = JSON.parse(fs.readFileSync(queryFile, "utf8"));
+
+logger.debug(queryJson);
+
+// start the streaming
 
 client.stream('statuses/filter', queryJson,  function(stream){
   stream.on('data', function(tweet) {
@@ -51,7 +58,7 @@ client.stream('statuses/filter', queryJson,  function(stream){
 
     // add the tweet test to solr
 
-    addTweetToSolr(tweet);
+ //   addTweetToSolr(tweet);
 
   });
 
