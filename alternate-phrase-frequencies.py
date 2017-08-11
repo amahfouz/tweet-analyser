@@ -50,7 +50,7 @@ for phrase in phrase_file:
 	words = phrase.rstrip().split(" ")
 	tweets = open(sys.argv[2])
 	freq = count_occurrences(tweets, words)
-	print  freq
+	print freq, phrase
 	tweets.close()
 print "Done counting frequencies."
 phrase_file.close()
