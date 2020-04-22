@@ -48,6 +48,8 @@ for phrase in phrase_file:
 	if phrase.rstrip() == "":
 		continue
 	words = phrase.rstrip().split(" ")
+	for word in phrase:
+		print word
 	tweets = open(sys.argv[2])
 	freq = count_occurrences(tweets, words)
 	print freq, phrase
